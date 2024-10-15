@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "test-snyk" ]
+    branches: [ "tests-snyk" ]
   pull_request:
-    branches: [ "test-snyk" ]
+    branches: [ "tests-snyk" ]
 
 jobs:
   build:
@@ -16,25 +16,21 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
     - name: Checkout juice-shop
       uses: actions/checkout@v4
       with:
         repository: juice-shop/juice-shop
-        path: juice-shop
-        
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - run: cd juice-shop && npm install
-    
+    - run: npm install
+
     - name: Run Snyk to check for vulnerabilities
       uses: snyk/actions/node@master
-    - run: cd juice-shop
       env:
-        SNYK_TOKEN: ${{ secrets.Snyk_token }}
-    
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
